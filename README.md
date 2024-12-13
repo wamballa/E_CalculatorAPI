@@ -43,7 +43,7 @@ Make sure your computer is connected to the **`SKYNPIKR`** network before you st
    ```
 3. If you see something like `Python 3.x.x`, you're good to go. If not:
    - Install Python via [Homebrew](https://brew.sh):
-     ```bash
+     ```
      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
      brew install python3
      ```
@@ -55,20 +55,20 @@ A virtual environment keeps everything organized. 🎩
 #### **For Both PC and Mac:**
 1. Open your terminal (Command Prompt, PowerShell, or Terminal).
 2. Navigate to the project folder:
-   ```bash
+   ```
    cd path/to/your/project
    ```
 3. Create a virtual environment:
-   ```bash
+   ```
    python3 -m venv myenv
    ```
 4. Activate the virtual environment:
    - **PC**:
-     ```bash
+     ```
      myenv\Scriptsctivate
      ```
    - **Mac**:
-     ```bash
+     ```
      source myenv/bin/activate
      ```
 
@@ -77,18 +77,18 @@ A virtual environment keeps everything organized. 🎩
 ### Step 3: Install Flask 🧪
 
 With your virtual environment activated, install Flask:
-```bash
+```
 pip install flask flask-cors
 ```
 
 ### Step 4: Run the Project 🚦
 
 1. Make sure you’re in the project folder:
-   ```bash
+   ```
    cd path/to/your/project
    ```
 2. Start the Flask server:
-   ```bash
+   ```
    python calculatorAPI.py
    ```
 3. Look for a message like this:
@@ -107,22 +107,22 @@ pip install flask flask-cors
    - **Mac**: Git is already installed! 🎉
 
 2. Clone the repository:
-   ```bash
+   ```
    git clone https://github.com/wamballa/E_CalculatorAPI.git
    ```
 
 3. Navigate to the project folder:
-   ```bash
+   ```
    cd E_CalculatorAPI
    ```
 
 4. Pull the latest changes (always do this before starting work):
-   ```bash
+   ```
    git pull origin main
    ```
 
 5. Push your changes after editing files:
-   ```bash
+   ```
    git add .
    git commit -m "Your message here"
    git push origin main
