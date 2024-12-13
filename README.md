@@ -38,7 +38,7 @@ Make sure your computer is connected to the **`SKYNPIKR`** network before you st
 #### **For Mac Users:**
 1. Open **Terminal**.
 2. Type the following and press Enter:
-   ```bash
+   ```
    python3 --version
    ```
 3. If you see something like `Python 3.x.x`, you're good to go. If not:
