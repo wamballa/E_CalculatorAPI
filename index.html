@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel-Based API Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .input-cell {
+            width: 100px;
+        }
+        .output-cell {
+            background-color: #f0f0f0;
+        }
+        .slider-container {
+            margin-top: 20px;
+        }
+        .api-status {
+            margin-top: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Excel-Based API Interface</h1>
+    <p>Enter inputs to calculate outputs. Use the slider to apply a multiplier.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cell</th>
+                <th>Value</th>
+                <th>Formula</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Rows will be dynamically generated -->
+        </tbody>
+    </table>
+
+    <div class="slider-container">
+        <label for="multiplier">Multiplier: </label>
+        <input type="range" id="multiplier" min="1" max="10" value="1" step="1">
+        <span id="multiplier-value">1</span>
+    </div>
+
+    <div class="api-status" id="api-status">API status: Waiting for input...</div>
+
+    <script>
+        // Global object to track all inputs
+        const inputs = { multiplier: 1 }; // Include multiplier by default
+
+        // Example data (Replace this with dynamic data fetch if needed)
+        const data = [
+            { cell: 'A1', value: '', formula: null, isInput: true },
+            { cell: 'B1', value: '', formula: null, isInput: true },
+            { cell: 'C1', value: '', formula: '=A1*multiplier + B1*multiplier', isInput: false },
+        ];
+
+        const tableBody = document.getElementById('table-body');
+
+        // Function to dynamically render table rows
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+
+            // Cell
+            const cellTd = document.createElement('td');
+            cellTd.textContent = row.cell;
+            tr.appendChild(cellTd);
+
+            // Value (Input/Output)
+            const valueTd = document.createElement('td');
+            if (row.isInput) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'input-cell';
+                input.value = row.value;
+                input.dataset.cell = row.cell;
+
+                // Track changes to inputs
+                input.addEventListener('input', (e) => {
+                    const cell = e.target.dataset.cell;
+                    const value = e.target.value;
+                    updateApi(cell, value);
+                });
+
+                valueTd.appendChild(input);
+            } else {
+                valueTd.textContent = row.value || 'Output';
+                valueTd.className = 'output-cell';
+                valueTd.dataset.cell = row.cell;
+            }
+            tr.appendChild(valueTd);
+
+            // Formula
+            const formulaTd = document.createElement('td');
+            formulaTd.textContent = row.formula || 'N/A';
+            tr.appendChild(formulaTd);
+
+            tableBody.appendChild(tr);
+        });
+
+        // Function to send updated inputs to the API
+        function updateApi(cell, value) {
+            const apiStatus = document.getElementById('api-status');
+
+            // Update the global inputs object
+            inputs[cell] = value;
+
+            apiStatus.textContent = `Updating cell ${cell} with value ${value}...`;
+
+            fetch('http://192.168.0.37:5000/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ inputs })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    apiStatus.textContent = `Cell ${cell} updated successfully! Output: ${JSON.stringify(data)}`;
+                    updateOutputs(data); // Update the output cells dynamically
+                })
+                .catch(error => {
+                    apiStatus.textContent = `Error updating cell ${cell}: ${error}`;
+                });
+        }
+
+        // Function to update output cells dynamically
+        function updateOutputs(data) {
+            const outputs = data.outputs;
+            for (const [cell, value] of Object.entries(outputs)) {
+                const cellElement = document.querySelector(`.output-cell[data-cell="${cell}"]`);
+                if (cellElement) {
+                    cellElement.textContent = value;
+                }
+            }
+        }
+
+        // Handle slider input
+        const multiplierInput = document.getElementById('multiplier');
+        const multiplierValue = document.getElementById('multiplier-value');
+
+        multiplierInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            multiplierValue.textContent = value;
+            inputs['multiplier'] = value; // Update multiplier in global inputs
+            updateApi('multiplier', value); // Trigger API update
+        });
+    </script>
+</body>
+</html>
